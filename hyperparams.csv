@@ -1,0 +1,2 @@
+﻿Experiment,Epochs,LR,Batch size,Decay,Optimizer
+Base,5,0.005,16,0.01,Adam
