@@ -217,16 +217,15 @@ def save_sent_model():
     trainer.save_model(args.save)
 
 # Load saved model and run on given dataset
-def classify_sent(data, model_path):
-    train_dataset = datasets.load_dataset('csv',
-                                          data_files={'train': args.data})
+def classify_sent():
+    data = datasets.load_dataset('csv', data_files={'train': args.data})
     # Load tokenizer
     tokenizer = AutoTokenizer.from_pretrained(args.model)
     # Load saved model
-    classifier = pipeline(task='text-classification', model=model_path, tokenizer=tokenizer)
+    classifier = pipeline(task='text-classification', model=args.save, tokenizer=tokenizer)
     tokenizer_kwargs = {'padding': True, 'truncation': True, 'max_length': 512}
     # Run data through model
-    predictions = classifier(data, **tokenizer_kwargs)
+    predictions = classifier(data['train']['text'], **tokenizer_kwargs)
     # Convert and return prediction labels
     labels = {'LABEL_0': 'positive', 'LABEL_1': 'negative', 'LABEL_2': 'neutral'}
     return [labels[x['label']] for x in predictions]
