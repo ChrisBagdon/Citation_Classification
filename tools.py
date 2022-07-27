@@ -1,8 +1,8 @@
 from math import log
-
 import pandas as pd
 import numpy as np
 import jsonlines
+
 
 ### Import dataset ###
 def import_json(path):
@@ -151,17 +151,21 @@ class naive_bayes:
     def predict(self, X, use_log=True):
         predictions = []
 
+        # Loop through inputs
         for string in X:
+            # Tokenize input string
             tokens = {}
             tokenize(string, tokens)
             probabilities = []
             for label, label_dic in self.labels.items():
+                # Calculate probability using log scale
                 if use_log:
                     prob = sum(log(label_dic["term_probs"][token]) * count
                                if token in label_dic['terms']
                                else log(1 / label_dic['term_count']) * count
                                for token, count in tokens.items()) \
                            + log(label_dic['prior'])
+                # Calcualte probability
                 else:
                     prob = label_dic['prior']
                     for token, count in tokens.items():
@@ -171,6 +175,7 @@ class naive_bayes:
                             prob = prob * ((1 / label_dic['term_count']) ** count)
                             # print(prob)
                 probabilities.append((label, prob))
+            # Save highest probability
             predictions.append(max(probabilities, key=lambda item: item[1])[0])
 
         return predictions
