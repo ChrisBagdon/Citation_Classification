@@ -7,7 +7,7 @@ from datasets import load_metric
 import argparse
 import csv
 import numpy as np
-from tools import evaluate
+from tools import evaluate, compute_metrics, compute_metrics2
 
 
 """
@@ -62,13 +62,6 @@ def main():
 
     # Create data collator
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
-
-    # Define metric for trainer
-    metric = load_metric("accuracy")
-    def compute_metrics(eval_pred):
-        logits, labels = eval_pred
-        predictions = np.argmax(logits, axis=-1)
-        return metric.compute(predictions=predictions, references=labels)
 
     # Initialize model
     model = AutoModelForSequenceClassification.from_pretrained(args.model, num_labels=3)

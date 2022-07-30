@@ -2,7 +2,14 @@ from math import log
 import pandas as pd
 import numpy as np
 import jsonlines
+from datasets import metric
+from sklearn.metrics import accuracy_score, recall_score, precision_score, f1_score
 
+"""
+Python file containing varoius methods such as Naive Bayes classifier and evaluation method
+
+Written by Christopher Bagdon and Daniel Park 06/2022
+"""
 
 ### Import dataset ###
 def import_json(path):
@@ -67,6 +74,24 @@ def save_scores(scores, model_name, feature_names):
     filepath = output_directory + filename + '.csv'
     scores.to_csv(filepath)
 
+# Metrics methods for transformers trainers
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+
+    predictions = np.argmax(logits, axis=-1)
+
+    return metric.compute(predictions=predictions, references=labels)
+
+def compute_metrics2(p):
+    pred, labels = p
+    pred = np.argmax(pred, axis=1)
+
+    accuracy = accuracy_score(y_true=labels, y_pred=pred)
+    recall = recall_score(y_true=labels, y_pred=pred, average="macro")
+    precision = precision_score(y_true=labels, y_pred=pred, average="macro")
+    f1 = f1_score(y_true=labels, y_pred=pred, average="macro")
+
+    return {"accuracy": accuracy, "precision": precision, "recall": recall, "f1": f1}
 ### Model Methods ###
 
 def tokenize(text, tokens):

@@ -13,7 +13,7 @@ from transformers import pipeline
 import pandas as pd
 from sklearn.metrics import accuracy_score, recall_score, precision_score, f1_score
 import argparse
-
+from tools import compute_metrics, compute_metrics2
 """
 Script for training, saving, and running a transformer-based sentiment classification model.
 Prints evaluation of test set
@@ -53,24 +53,6 @@ def free_gpu_cache():
     print("GPU Usage after emptying the cache")
     gpu_usage()
 free_gpu_cache()
-
-
-# Helper methods for trainer metrics
-metric = load_metric("accuracy")
-def compute_metrics(eval_pred):
-    logits, labels = eval_pred
-
-    predictions = np.argmax(logits, axis=-1)
-
-    return metric.compute(predictions=predictions, references=labels)
-def compute_metrics2(p):
-    pred, labels = p
-    pred = np.argmax(pred, axis=1)
-    accuracy = accuracy_score(y_true=labels, y_pred=pred)
-    recall = recall_score(y_true=labels, y_pred=pred, average='weighted')
-    precision = precision_score(y_true=labels, y_pred=pred, average='weighted')
-    f1 = f1_score(y_true=labels, y_pred=pred, average='weighted')
-    return {"accuracy": accuracy, "precision": precision, "recall": recall, "f1": f1}
 
 # Train and run cross-validation experiment
 def cross_validate_sent():
